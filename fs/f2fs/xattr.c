@@ -258,13 +258,13 @@ static int read_inline_xattr(struct inode *inode, struct page *ipage,
 	void *inline_addr;
 
 	if (ipage) {
-		inline_addr = inline_xattr_addr(inode, ipage);
+		inline_addr = inline_xattr_addr(ipage);
 	} else {
-		page = f2fs_get_node_page(sbi, inode->i_ino);
+		page = get_node_page(sbi, inode->i_ino);
 		if (IS_ERR(page))
 			return PTR_ERR(page);
 
-		inline_addr = inline_xattr_addr(inode, page);
+		inline_addr = inline_xattr_addr(page);
 	}
 	memcpy(txattr_addr, inline_addr, inline_size);
 	f2fs_put_page(page, 1);
