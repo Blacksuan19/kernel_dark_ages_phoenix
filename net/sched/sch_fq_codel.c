@@ -476,7 +476,7 @@ static int fq_codel_init(struct Qdisc *sch, struct nlattr *opt)
 			goto init_failure;
 	}
 
-	err = tcf_block_get(&q->block, &q->filter_list);
+	err = tcf_block_get(&q->block, &q->filter_list, sch);
 	if (err)
 		goto init_failure;
 
