@@ -430,9 +430,9 @@ static void sugov_update_shared(struct update_util_data *hook, u64 time,
 	if (sugov_should_update_freq(sg_policy, time) &&
 		!(flags & SCHED_CPUFREQ_CONTINUE)) {
 		if (flags & SCHED_CPUFREQ_RT_DL) {
+			next_f = sg_policy->policy->cpuinfo.max_freq;
 			/* clear cache when it's bypassed */
 			sg_policy->cached_raw_freq = 0;
-			next_f = sg_policy->policy->cpuinfo.max_freq;
 		} else {
 			next_f = sugov_next_freq_shared(sg_cpu, time);
 		}
