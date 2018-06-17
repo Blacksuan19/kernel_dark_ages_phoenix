@@ -214,6 +214,13 @@ static void sched_boost_disable_all(void)
 
 static void _sched_set_boost(int type)
 {
+#ifdef CONFIG_DYNAMIC_STUNE_BOOST
+	if (type > 0)
+		stune_boost("top-app");
+	else
+		reset_stune_boost("top-app");
+#endif // CONFIG_DYNAMIC_STUNE_BOOST
+
 	if (type == 0)
 		sched_boost_disable_all();
 	else if (type > 0)
