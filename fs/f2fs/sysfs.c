@@ -297,19 +297,10 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
 			struct f2fs_sb_info *sbi,
 			const char *buf, size_t count)
 {
-	ssize_t ret;
-	bool gc_entry = (!strcmp(a->attr.name, "gc_urgent") ||
-					a->struct_type == GC_THREAD);
+	if (!strcmp(a->attr.name, "cp_interval"))
+		return count;
 
-	if (gc_entry) {
-		if (!down_read_trylock(&sbi->sb->s_umount))
-			return -EAGAIN;
-	}
-	ret = __sbi_store(a, sbi, buf, count);
-	if (gc_entry)
-		up_read(&sbi->sb->s_umount);
-
-	return ret;
+	return __sbi_store(a, sbi, buf, count);
 }
 
 static ssize_t f2fs_attr_show(struct kobject *kobj,
