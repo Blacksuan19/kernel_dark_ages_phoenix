@@ -1920,6 +1920,23 @@ static void compact_nodes(void)
 		compact_node(nid);
 }
 
+static void do_compaction(struct work_struct *work)
+{
+	/* Return early if the screen is on */
+	if (screen_on)
+		return;
+
+	pr_info("Scheduled memory compaction is starting\n");
+
+	/* Do full compaction */
+	compact_nodes();
+
+	/* Force compaction timeout */
+	compaction_forced_timeout = jiffies + msecs_to_jiffies(compaction_timeout_ms);
+
+	pr_info("Scheduled memory compaction is completed\n");
+}
+
 /* The written value is actually unused, all memory is compacted */
 int sysctl_compact_memory;
 
