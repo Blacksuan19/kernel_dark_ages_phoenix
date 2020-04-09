@@ -492,8 +492,8 @@ static int cpu_boost_init(void)
 	/* Wake it up! */
 	wake_up_process(cpu_boost_worker_thread);
 
-	kthread_init_work(&input_boost_work, do_input_boost);
-	kthread_init_work(&powerkey_input_boost_work, do_powerkey_input_boost);
+	INIT_WORK(&input_boost_work, do_input_boost);
+	INIT_WORK(&powerkey_input_boost_work, do_powerkey_input_boost);
 	INIT_DELAYED_WORK(&input_boost_rem, do_input_boost_rem);
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	INIT_DELAYED_WORK(&dynamic_stune_boost_rem, do_dynamic_stune_boost_rem);
