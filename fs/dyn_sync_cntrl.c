@@ -26,7 +26,7 @@ static DEFINE_MUTEX(fsync_mutex);
 // Declarations
 
 bool suspend_active __read_mostly = true;
-bool dyn_fsync_active __read_mostly = false;
+bool dyn_fsync_active __read_mostly = true;
 
 struct notifier_block fb_notif;
 
