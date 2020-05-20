@@ -16,11 +16,6 @@
 #define ISRHEL7
 #elif RHEL_MAJOR == 8
 #define ISRHEL8
-#ifdef RHEL_MINOR
-#if RHEL_MINOR == 2
-#define ISRHEL82
-#endif
-#endif
 #endif
 #endif
 #ifdef UTS_UBUNTU_RELEASE_ABI
@@ -38,6 +33,9 @@
 #endif
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 13, 0) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
 #define ISOPENSUSE15
+#endif
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0) && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
+#define ISOPENSUSE152
 #endif
 #endif
 
@@ -97,7 +95,7 @@
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0) && LINUX_VERSION_CODE >= KERNEL_VERSION(3, 16, 83)
 #define ipv6_dst_lookup_flow(a, b, c, d) ipv6_dst_lookup_flow(b, c, d)
-#elif (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 5) && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)) || (LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 18) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 20, 0)) || (((!defined(ISDEBIAN) && LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 119)) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 118)) && !defined(ISRHEL82))
+#elif (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 5) && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)) || (LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 18) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 20, 0)) || (!defined(ISHREL8) && !defined(ISDEBIAN) && LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 119) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)) || (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 181) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)) || (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 224) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 5, 0)) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 224)
 #define ipv6_dst_lookup_flow(a, b, c, d) ipv6_dst_lookup(a, b, &dst, c) + (void *)0 ?: dst
 #endif
 
@@ -423,7 +421,7 @@ static inline u64 ktime_get_coarse_boottime_ns(void)
 {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0)
 	return ktime_to_ns(ktime_get_boottime());
-#elif (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 5) && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)) || (LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 18) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 20, 0)) || (!defined(ISHREL8) && !defined(ISDEBIAN) && LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 119) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)) || (LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 181) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)) || (LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 224) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 5, 0)) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 4, 224)
+#elif (LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 12) && LINUX_VERSION_CODE >= KERNEL_VERSION(4, 20, 0)) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 53)
 	return ktime_to_ns(ktime_mono_to_any(ns_to_ktime(jiffies64_to_nsecs(get_jiffies_64())), TK_OFFS_BOOT));
 #else
 	return ktime_to_ns(ktime_get_coarse_boottime());
@@ -664,7 +662,7 @@ struct __compat_dummy_container { char dev; };
 #define COMPAT_CANNOT_USE_AVX512
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0) && !defined(ISOPENSUSE15)
 #include <net/genetlink.h>
 #define genl_dump_check_consistent(a, b) genl_dump_check_consistent(a, b, &genl_family)
 #endif
@@ -726,7 +724,7 @@ static inline void cpu_to_le32_array(u32 *buf, unsigned int words)
 }
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0) && !defined(ISOPENSUSE15)
 #include <crypto/algapi.h>
 static inline void crypto_xor_cpy(u8 *dst, const u8 *src1, const u8 *src2,
 				  unsigned int size)
@@ -787,7 +785,7 @@ struct __kernel_timespec {
 #endif
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(ISRHEL82)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(ISRHEL8)
 #include <linux/skbuff.h>
 #define skb_probe_transport_header(a) skb_probe_transport_header(a, 0)
 #endif
@@ -796,7 +794,7 @@ struct __kernel_timespec {
 #define ignore_df local_df
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(ISRHEL82)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(ISRHEL8)
 /* Note that all intentional uses of the non-_bh variety need to explicitly
  * undef these, conditionalized on COMPAT_CANNOT_DEPRECIATE_BH_RCU.
  */
@@ -828,7 +826,7 @@ static __always_inline void old_rcu_barrier(void)
 #define COMPAT_CANNOT_DEPRECIATE_BH_RCU
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 10) && !defined(ISRHEL8)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 10) && !defined(ISRHEL8) && !defined(ISOPENSUSE15)
 static inline void skb_mark_not_on_list(struct sk_buff *skb)
 {
 	skb->next = NULL;
@@ -838,7 +836,7 @@ static inline void skb_mark_not_on_list(struct sk_buff *skb)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 20, 0) && !defined(ISRHEL8)
 #define NLA_EXACT_LEN NLA_UNSPEC
 #endif
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0) && !defined(ISRHEL82)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0) && !defined(ISRHEL8)
 #define NLA_MIN_LEN NLA_UNSPEC
 #define COMPAT_CANNOT_INDIVIDUAL_NETLINK_OPS_POLICY
 #endif
@@ -854,7 +852,7 @@ static inline void skb_mark_not_on_list(struct sk_buff *skb)
 #endif
 #endif
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 5, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 5, 0) && !defined(ISOPENSUSE152)
 #define genl_dumpit_info(cb) ({ \
 	struct { struct nlattr **attrs; } *a = (void *)((u8 *)cb->args + offsetofend(struct dump_ctx, next_allowedip)); \
 	BUILD_BUG_ON(sizeof(cb->args) < offsetofend(struct dump_ctx, next_allowedip) + sizeof(*a)); \
@@ -1028,9 +1026,23 @@ static inline void skb_reset_redirect(struct sk_buff *skb)
 }
 #endif
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 14, 0)
+#define skb_get_hash skb_get_rxhash
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 15, 0)
+#define hash rxhash
+#define l4_hash l4_rxhash
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0)
+#define sw_hash ignore_df = 0; skb->nf_trace = skb->ooo_okay
+#endif
+
 #if defined(ISUBUNTU1604) || defined(ISRHEL7)
 #include <linux/siphash.h>
 #ifndef _WG_LINUX_SIPHASH_H
+#define hsiphash_1u32 siphash_1u32
 #define hsiphash_2u32 siphash_2u32
 #define hsiphash_3u32 siphash_3u32
 #define hsiphash_key_t siphash_key_t
