@@ -2865,6 +2865,8 @@ out:
 	if (old_page)
 		put_page(old_page);
 	return ret;
+oom:
+	return VM_FAULT_OOM;
 }
 
 /**
