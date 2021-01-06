@@ -1849,7 +1849,7 @@ static struct config_group *gadgets_make(
 	gi->composite.unbind = configfs_do_nothing;
 	gi->composite.suspend = NULL;
 	gi->composite.resume = NULL;
-	gi->composite.max_speed = USB_SPEED_SUPER;
+	gi->composite.max_speed = USB_SPEED_SUPER_PLUS;
 
 #ifndef CONFIG_USB_CONFIGFS_UEVENT
 	spin_lock_init(&gi->spinlock);
